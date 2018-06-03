@@ -203,4 +203,13 @@ $RECYCLE.BIN/
 
 ## Project
 
-temp
+.idea
+.vscode
+
+.editorconfig
+.eslintrc.json
+
+*.zip
+*.tgz
+
+test.html

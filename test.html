@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Request Test</title>
+        <script src="index.js"></script>
+    </head>
+    <body>
+        <input id="inUrl" type="text">
+        <button id="btnRequest">Request</button>
+        <button id="btnReset">Reset</button>
+        <script>
+            (function () {
+                // TEST 'https://jsonplaceholder.typicode.com/posts/1'
+
+                var inUrl
+
+                document.addEventListener('DOMContentLoaded', start)
+
+                function start () {
+                    var btnRequest, btnReset
+
+                    inUrl = document.getElementById('inUrl')
+                    btnRequest = document.getElementById('btnRequest')
+                    btnReset = document.getElementById('btnReset')
+
+                    btnRequest.addEventListener('click',actionRequest)
+                    btnReset.addEventListener('click',actionReset)
+                }
+
+                function actionRequest () {
+                    console.log('ACTION Request')
+                    RequestJs(
+                        {
+                            url: inUrl.value
+                        },
+                        onRequest
+                    )
+                }
+
+                function actionReset () {
+                    console.log('ACTION Reset')
+                    inUrl.value = ''
+                }
+
+                function onRequest (err, result) {
+                    console.log('On requst', err, result)
+                }
+            }())
+        </script>
+    </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "@gidw/request-js",
+  "version": "0.0.1",
+  "description": "HTTP request helper for the browser.",
+  "author": "Gilles De Waele",
+  "license": "MIT",
+  "keywords": [
+    "request",
+    "browser",
+    "http",
+    "https",
+    "minimal"
+  ],
+  "browser": "request-js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "4.19.1",
+    "eslint-config-standard": "11.0.0"
+  },
+  "repository": "github:GiDW/request-js.git",
+  "bugs": {
+    "url": "https://github.com/GiDW/request-js/issues",
+    "email": "de.waele.gilles@gmail.com"
+  },
+  "scripts": {}
+}
