@@ -7,13 +7,14 @@
     </head>
     <body>
         <input id="inUrl" type="text">
+        <input id="chkJson" type="checkbox">
         <button id="btnRequest">Request</button>
         <button id="btnReset">Reset</button>
         <script>
             (function () {
                 // TEST 'https://jsonplaceholder.typicode.com/posts/1'
 
-                var inUrl
+                var inUrl, chkJson
 
                 document.addEventListener('DOMContentLoaded', start)
 
@@ -21,6 +22,7 @@
                     var btnRequest, btnReset
 
                     inUrl = document.getElementById('inUrl')
+                    chkJson = document.getElementById('chkJson')
                     btnRequest = document.getElementById('btnRequest')
                     btnReset = document.getElementById('btnReset')
 
@@ -29,10 +31,11 @@
                 }
 
                 function actionRequest () {
-                    console.log('ACTION Request')
+                    console.log('ACTION Request', chkJson.checked)
                     RequestJs(
                         {
-                            url: inUrl.value
+                            url: inUrl.value,
+                            json: chkJson.checked
                         },
                         onRequest
                     )

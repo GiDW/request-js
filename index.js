@@ -23,15 +23,22 @@
   aNode = document.createElement('a')
 
   function RequestJs (config, callback) {
-    var _cbCalled
-    var req, _url, _params, keys, key, value, length, i
-    var _response, _status
+    var _cbCalled, timeoutId
+    var req, _url, _params, keys, key, lkey, value, length, i
+    var acceptFound, contentFound
+    var _method, _response, _status
 
     _cbCalled = false
+    acceptFound = false
+    contentFound = false
 
     if (!isObject(config) || !isNEString(config.url)) {
       _cb(Request.ERR_INVALID_CONFIG)
       return
+    }
+
+    if (isVNumber(config.timeout) && config.timeout > 0) {
+      timeoutId = setTimeout(onTimeout, config.timeout)
     }
 
     req = new window.XMLHttpRequest()
@@ -46,8 +53,10 @@
       _url += _params
     }
 
+    _method = config.method ? config.method.toUpperCase() : 'GET'
+
     req.open(
-      config.method ? config.method : 'GET',
+      _method,
       _url,
       true
     )
@@ -57,15 +66,28 @@
       length = keys.length
       for (i = 0; i < length; i++) {
         key = keys[i]
+        lkey = key.toLowerCase()
         value = config.headers[key]
+        if (!acceptFound && lkey === 'accept') acceptFound = true
+        if (!contentFound && lkey === 'content-type') contentFound = true
         if (isDefined(value)) req.setRequestHeader(key, value)
+      }
+    }
+
+    if (!acceptFound) {
+      req.setRequestHeader('Accept', 'application/json, text/plain, */*')
+    }
+
+    if (_method === 'POST' || _method === 'PUT' || _method === 'PATCH') {
+      if (!contentFound) {
+        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8')
       }
     }
 
     req.send(isDefined(config.data) ? config.data : null)
 
     function onReadyStateChange () {
-      var result
+      var result, parsed
       if (req && req.readyState === 4) {
         // Handle IE9 bug
         _status = req.status === 1223 ? 204 : req.status
@@ -77,7 +99,7 @@
         if (_status === 0) {
           _status = _response
             ? 200
-            : parseUrl(config.url).protocol === 'file' ? 404 : 0
+            : parseUrl(config.url).protocol === 'file:' ? 404 : 0
         }
 
         result = {
@@ -89,16 +111,45 @@
         }
 
         if (isSuccess(_status)) {
-          _cb(null, result)
+          if (config.json === true) {
+            try {
+              parsed = JSON.parse(_response)
+              result.data = parsed
+              result.requestStatus = RequestJs.COMPLETED
+              _cb(null, result)
+            } catch (e) {
+              result.requestStatus = RequestJs.ERROR
+              _cb(result)
+            }
+          } else {
+            result.requestStatus = RequestJs.COMPLETED
+            _cb(null, result)
+          }
         } else {
+          result.requestStatus = RequestJs.ERROR
           _cb(result)
         }
+      }
+    }
+
+    function onTimeout () {
+      if (!_cbCalled) {
+        req.abort()
+        _cb({
+          data: '',
+          config: config,
+          stauts: 0,
+          statusText: '',
+          headers: '',
+          requestStatus: RequestJs.TIMEOUT
+        })
       }
     }
 
     function _cb (error, result) {
       if (!_cbCalled && typeof callback === 'function') {
         _cbCalled = true
+        clearTimeout(timeoutId)
         req.onreadystatechange = null
         req = null
         callback(error, result)
@@ -107,6 +158,10 @@
   }
 
   RequestJs.ERR_INVALID_CONFIG = 'Invalid config'
+  RequestJs.ERROR = 'error'
+  RequestJs.ABORTED = 'aborted'
+  RequestJs.TIMEOUT = 'timeout'
+  RequestJs.COMPLETED = 'completed'
 
   function paramSerializer (params) {
     var parts, keys, length, i, key, value
@@ -150,6 +205,10 @@
 
   function isObject (value) {
     return typeof value === 'object' && value !== null
+  }
+
+  function isVNumber (value) {
+    return isFinite(value)
   }
 
   function isNEString (value) {
