@@ -23,7 +23,7 @@
   aNode = document.createElement('a')
 
   function RequestJs (config, callback) {
-    var _cbCalled, timeoutId
+    var _cbCalled, timeoutId, timedOut
     var req, _url, _params, keys, key, lkey, value, length, i
     var acceptFound, contentFound
     var _method, _response, _status
@@ -31,9 +31,10 @@
     _cbCalled = false
     acceptFound = false
     contentFound = false
+    timedOut = false
 
     if (!isObject(config) || !isNEString(config.url)) {
-      _cb(Request.ERR_INVALID_CONFIG)
+      _cb(RequestJs.ERR_INVALID_CONFIG)
       return
     }
 
@@ -49,7 +50,7 @@
     _params = paramSerializer(config.params)
 
     if (_params) {
-      _url += _url.indexof('?') > 0 ? '&' : '?'
+      _url += _url.indexOf('?') > 0 ? '&' : '?'
       _url += _params
     }
 
@@ -85,6 +86,14 @@
     }
 
     req.send(isDefined(config.data) ? config.data : null)
+
+    return {
+      abort: abort
+    }
+
+    function abort () {
+      if (req) req.abort()
+    }
 
     function onReadyStateChange () {
       var result, parsed
@@ -126,7 +135,7 @@
             _cb(null, result)
           }
         } else {
-          result.requestStatus = RequestJs.ERROR
+          result.requestStatus = timedOut ? RequestJs.TIMEOUT : RequestJs.ERROR
           _cb(result)
         }
       }
@@ -134,11 +143,12 @@
 
     function onTimeout () {
       if (!_cbCalled) {
+        timedOut = true
         req.abort()
         _cb({
           data: '',
           config: config,
-          stauts: 0,
+          status: 0,
           statusText: '',
           headers: '',
           requestStatus: RequestJs.TIMEOUT
@@ -147,13 +157,17 @@
     }
 
     function _cb (error, result) {
-      if (!_cbCalled && typeof callback === 'function') {
+      if (!_cbCalled && isFunction(callback)) {
         _cbCalled = true
         clearTimeout(timeoutId)
-        req.onreadystatechange = null
-        req = null
+        _clear()
         callback(error, result)
       }
+    }
+
+    function _clear () {
+      if (req) req.onreadystatechange = null
+      req = null
     }
   }
 
@@ -162,6 +176,99 @@
   RequestJs.ABORTED = 'aborted'
   RequestJs.TIMEOUT = 'timeout'
   RequestJs.COMPLETED = 'completed'
+
+  RequestJs.get = function (url, callback, config) {
+    if (!isFunction(callback)) return
+
+    return RequestJs(
+      mergeObjects(
+        {
+          method: 'GET',
+          url: url
+        },
+        config
+      ),
+      callback
+    )
+  }
+
+  RequestJs.head = function (url, callback, config) {
+    if (!isFunction(callback)) return
+
+    return RequestJs(
+      mergeObjects(
+        {
+          method: 'HEAD',
+          url: url
+        },
+        config
+      ),
+      callback
+    )
+  }
+
+  RequestJs.delete = function (url, callback, config) {
+    if (!isFunction(callback)) return
+
+    return RequestJs(
+      mergeObjects(
+        {
+          method: 'HEAD',
+          url: url
+        },
+        config
+      ),
+      callback
+    )
+  }
+
+  RequestJs.post = function (url, data, callback, config) {
+    if (!isFunction(callback)) return
+
+    return RequestJs(
+      mergeObjects(
+        {
+          method: 'POST',
+          url: url,
+          data: data
+        },
+        config
+      ),
+      callback
+    )
+  }
+
+  RequestJs.put = function (url, data, callback, config) {
+    if (!isFunction(callback)) return
+
+    return RequestJs(
+      mergeObjects(
+        {
+          method: 'PUT',
+          url: url,
+          data: data
+        },
+        config
+      ),
+      callback
+    )
+  }
+
+  RequestJs.patch = function (url, data, callback, config) {
+    if (!isFunction(callback)) return
+
+    return RequestJs(
+      mergeObjects(
+        {
+          method: 'PATCH',
+          url: url,
+          data: data
+        },
+        config
+      ),
+      callback
+    )
+  }
 
   function paramSerializer (params) {
     var parts, keys, length, i, key, value
@@ -207,6 +314,10 @@
     return typeof value === 'object' && value !== null
   }
 
+  function isFunction (fn) {
+    return typeof fn === 'function'
+  }
+
   function isVNumber (value) {
     return isFinite(value)
   }
@@ -221,6 +332,25 @@
 
   function isValidParamValue (value) {
     return value && typeof value !== 'function'
+  }
+
+  function mergeObjects (obj1, obj2) {
+    var keys, i, length, key, val1, val2
+
+    if (isObject(obj1) && isObject(obj2)) {
+      keys = Object.keys(obj2)
+      length = keys.length
+      for (i = 0; i < length; i++) {
+        key = keys[i]
+        val1 = obj1[key]
+        val2 = obj2[key]
+        obj1[key] = isObject(val1) && isObject(val2)
+          ? mergeObjects(val1, val2)
+          : val2
+      }
+    }
+
+    return obj1
   }
 
   function serializeValue (value) {

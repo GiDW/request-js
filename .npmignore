@@ -212,4 +212,7 @@ $RECYCLE.BIN/
 *.zip
 *.tgz
 
+jsconfig.json
+
 test.html
+test.ts
