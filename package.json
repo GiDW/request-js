@@ -25,6 +25,7 @@
     "email": "de.waele.gilles@gmail.com"
   },
   "scripts": {
+    "lint": "eslint index.js",
     "minify": "uglifyjs index.js --compress --mangle -o index.min.js"
   }
 }
