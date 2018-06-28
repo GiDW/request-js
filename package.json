@@ -17,7 +17,7 @@
   "dependencies": {},
   "devDependencies": {
     "standard": "11.0.1",
-    "uglify-js": "3.4.0"
+    "uglify-js": "3.4.2"
   },
   "repository": "github:GiDW/request-js.git",
   "bugs": {
