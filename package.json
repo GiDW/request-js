@@ -11,7 +11,7 @@
     "https",
     "minimal"
   ],
-  "browser": "request-js",
+  "browser": "index.js",
   "types": "index.d.ts",
   "unpkg": "index.min.js",
   "dependencies": {},
