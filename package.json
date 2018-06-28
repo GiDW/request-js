@@ -1,6 +1,6 @@
 {
   "name": "@gidw/request-js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "HTTP request helper for the browser.",
   "author": "Gilles De Waele",
   "license": "MIT",
