@@ -1,18 +1,18 @@
 import * as RequestJs from './index';
 
-RequestJs({
+RequestJs(
+  {
     url: '',
     params: {
-        'lo': 23
+      'lo': 23
     },
     headers: {
-        'test': 'header'
+      'test': 'header'
     }
-}, cb);
-
-RequestJs.get('some', cb);
-RequestJs.put('some', null, cb);
+  },
+  cb
+)
 
 function cb (err, res) {
-    console.log(err, res);
+    console.log(err, res)
 }
