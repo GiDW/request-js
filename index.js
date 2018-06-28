@@ -122,7 +122,7 @@
         }
 
         if (isSuccess(_status)) {
-          if (config.json === true) {
+          if (config.json === true && isNEString(_response)) {
             try {
               parsed = JSON.parse(_response)
               result.data = parsed
