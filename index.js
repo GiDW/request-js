@@ -192,36 +192,6 @@
     )
   }
 
-  RequestJs.head = function (url, callback, config) {
-    if (!isFunction(callback)) return
-
-    return RequestJs(
-      mergeObjects(
-        {
-          method: 'HEAD',
-          url: url
-        },
-        config
-      ),
-      callback
-    )
-  }
-
-  RequestJs.delete = function (url, callback, config) {
-    if (!isFunction(callback)) return
-
-    return RequestJs(
-      mergeObjects(
-        {
-          method: 'HEAD',
-          url: url
-        },
-        config
-      ),
-      callback
-    )
-  }
-
   RequestJs.post = function (url, data, callback, config) {
     if (!isFunction(callback)) return
 
@@ -229,38 +199,6 @@
       mergeObjects(
         {
           method: 'POST',
-          url: url,
-          data: data
-        },
-        config
-      ),
-      callback
-    )
-  }
-
-  RequestJs.put = function (url, data, callback, config) {
-    if (!isFunction(callback)) return
-
-    return RequestJs(
-      mergeObjects(
-        {
-          method: 'PUT',
-          url: url,
-          data: data
-        },
-        config
-      ),
-      callback
-    )
-  }
-
-  RequestJs.patch = function (url, data, callback, config) {
-    if (!isFunction(callback)) return
-
-    return RequestJs(
-      mergeObjects(
-        {
-          method: 'PATCH',
           url: url,
           data: data
         },
