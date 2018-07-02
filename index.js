@@ -30,6 +30,9 @@
     var acceptFound, contentFound
     var _method, _response, _status
 
+    var H_ACCEPT = 'accept'
+    var H_CONTENT_TYPE = 'content-type'
+
     _cbCalled = false
     acceptFound = false
     contentFound = false
@@ -71,19 +74,19 @@
         key = keys[i]
         lkey = key.toLowerCase()
         value = config.headers[key]
-        if (!acceptFound && lkey === 'accept') acceptFound = true
-        if (!contentFound && lkey === 'content-type') contentFound = true
+        if (!acceptFound && lkey === H_ACCEPT) acceptFound = true
+        if (!contentFound && lkey === H_CONTENT_TYPE) contentFound = true
         if (isDefined(value)) req.setRequestHeader(key, value)
       }
     }
 
     if (!acceptFound) {
-      req.setRequestHeader('Accept', 'application/json, text/plain, */*')
+      req.setRequestHeader(H_ACCEPT, 'application/json, text/plain, */*')
     }
 
     if (_method === 'POST' || _method === 'PUT' || _method === 'PATCH') {
       if (!contentFound) {
-        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8')
+        req.setRequestHeader(H_CONTENT_TYPE, 'application/json;charset=utf-8')
       }
     }
 
