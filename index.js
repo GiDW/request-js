@@ -30,6 +30,9 @@
     var acceptFound, contentFound
     var _method, _response, _status
 
+    var H_ACCEPT = 'accept'
+    var H_CONTENT_TYPE = 'content-type'
+
     _cbCalled = false
     acceptFound = false
     contentFound = false
@@ -71,19 +74,19 @@
         key = keys[i]
         lkey = key.toLowerCase()
         value = config.headers[key]
-        if (!acceptFound && lkey === 'accept') acceptFound = true
-        if (!contentFound && lkey === 'content-type') contentFound = true
+        if (!acceptFound && lkey === H_ACCEPT) acceptFound = true
+        if (!contentFound && lkey === H_CONTENT_TYPE) contentFound = true
         if (isDefined(value)) req.setRequestHeader(key, value)
       }
     }
 
     if (!acceptFound) {
-      req.setRequestHeader('Accept', 'application/json, text/plain, */*')
+      req.setRequestHeader(H_ACCEPT, 'application/json, text/plain, */*')
     }
 
     if (_method === 'POST' || _method === 'PUT' || _method === 'PATCH') {
       if (!contentFound) {
-        req.setRequestHeader('Content-Type', 'application/json;charset=utf-8')
+        req.setRequestHeader(H_CONTENT_TYPE, 'application/json;charset=utf-8')
       }
     }
 
@@ -208,6 +211,40 @@
       ),
       callback
     )
+  }
+
+  RequestJs.parseHeaders = function (headers) {
+    var parsed, parts, line, i, length, idx
+
+    parsed = {}
+
+    if (isNEString(headers)) {
+      parts = headers.trim().split('\n')
+      length = parts.length
+      for (i = 0; i < length; i++) {
+        line = parts[i]
+        idx = line.indexOf(':')
+        _addHeader(
+          line.substr(0, idx).trim().toLowerCase(),
+          line.substr(idx + 1).trim()
+        )
+      }
+    } else if (isObject(headers)) {
+      parts = Object.keys(headers)
+      length = parts.length
+      for (i = 0; i < length; i++) {
+        line = parts[i]
+        _addHeader(line.toLowerCase(), headers[line].trim())
+      }
+    }
+
+    return parsed
+
+    function _addHeader (key, value) {
+      if (key) {
+        parsed[key] = parsed[key] ? parsed[key] + ', ' + value : value
+      }
+    }
   }
 
   function paramSerializer (params) {
