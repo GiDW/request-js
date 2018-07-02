@@ -269,7 +269,7 @@
       }
     }
 
-    return parts.join['&']
+    return parts.join('&')
 
     function _serializeArray (key, arr) {
       var i, length
