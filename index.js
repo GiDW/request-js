@@ -213,6 +213,40 @@
     )
   }
 
+  RequestJs.parseHeaders = function (headers) {
+    var parsed, parts, line, i, length, idx
+
+    parsed = {}
+
+    if (isNEString(headers)) {
+      parts = headers.trim().split('\n')
+      length = parts.length
+      for (i = 0; i < length; i++) {
+        line = parts[i]
+        idx = line.indexOf(':')
+        _addHeader(
+          line.substr(0, idx).trim().toLowerCase(),
+          line.substr(idx + 1).trim()
+        )
+      }
+    } else if (isObject(headers)) {
+      parts = Object.keys(headers)
+      length = parts.length
+      for (i = 0; i < length; i++) {
+        line = parts[i]
+        _addHeader(line.toLowerCase(), headers[line].trim())
+      }
+    }
+
+    return parsed
+
+    function _addHeader (key, value) {
+      if (key) {
+        parsed[key] = parsed[key] ? parsed[key] + ', ' + value : value
+      }
+    }
+  }
+
   function paramSerializer (params) {
     var parts, keys, length, i, key, value
 

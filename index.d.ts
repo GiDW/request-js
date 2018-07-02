@@ -45,4 +45,7 @@ declare namespace RequestJs {
     callback: RequestJsCallback,
     config?: RequestJsConfig,
   ): RequestJsReturnType;
+  export function parseHeaders (
+    headers: string | object
+  ): object
 }

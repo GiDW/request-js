@@ -1,4 +1,4 @@
-import * as RequestJs from './index';
+import RequestJs from './index';
 
 RequestJs(
   {
@@ -13,6 +13,12 @@ RequestJs(
   cb
 )
 
+RequestJs.get('URL', cb)
+
+let a
+a = RequestJs.parseHeaders('test')
+a = RequestJs.parseHeaders({})
+
 function cb (err, res) {
-    console.log(err, res)
+  console.log(err, res)
 }
