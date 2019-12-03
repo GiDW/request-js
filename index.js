@@ -183,34 +183,28 @@
   RequestJs.COMPLETED = 'completed'
 
   RequestJs.get = function (url, callback, config) {
+    var _config
     if (!isFunction(callback)) return
 
-    return RequestJs(
-      mergeObjects(
-        {
-          method: 'GET',
-          url: url
-        },
-        config
-      ),
-      callback
-    )
+    _config = config
+    if (!isObject(_config)) _config = {}
+    _config.method = 'GET'
+    _config.url = url
+
+    return RequestJs(_config, callback)
   }
 
   RequestJs.post = function (url, data, callback, config) {
+    var _config
     if (!isFunction(callback)) return
 
-    return RequestJs(
-      mergeObjects(
-        {
-          method: 'POST',
-          url: url,
-          data: data
-        },
-        config
-      ),
-      callback
-    )
+    _config = config
+    if (!isObject(_config)) _config = {}
+    _config.method = 'POST'
+    _config.url = url
+    _config.data = data
+
+    return RequestJs(_config, callback)
   }
 
   RequestJs.parseHeaders = function (headers) {
@@ -309,25 +303,6 @@
 
   function isValidParamValue (value) {
     return value && typeof value !== 'function'
-  }
-
-  function mergeObjects (obj1, obj2) {
-    var keys, i, length, key, val1, val2
-
-    if (isObject(obj1) && isObject(obj2)) {
-      keys = Object.keys(obj2)
-      length = keys.length
-      for (i = 0; i < length; i++) {
-        key = keys[i]
-        val1 = obj1[key]
-        val2 = obj2[key]
-        obj1[key] = isObject(val1) && isObject(val2)
-          ? mergeObjects(val1, val2)
-          : val2
-      }
-    }
-
-    return obj1
   }
 
   function serializeValue (value) {
