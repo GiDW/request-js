@@ -1,4 +1,4 @@
-import RequestJs from './index';
+import RequestJs from './index'
 
 RequestJs(
   {
@@ -15,9 +15,8 @@ RequestJs(
 
 RequestJs.get('URL', cb)
 
-let a
-a = RequestJs.parseHeaders('test')
-a = RequestJs.parseHeaders({})
+console.log('Parse headers test 1', RequestJs.parseHeaders('test'))
+console.log('Parse headers test 2', RequestJs.parseHeaders({}))
 
 function cb (err, res) {
   console.log(err, res)
