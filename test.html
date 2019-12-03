@@ -3,51 +3,95 @@
     <head>
         <meta charset="UTF-8">
         <title>Request Test</title>
-        <script src="index.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+        .result-container {
+            width: 640px;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            overflow: auto;
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                color: #ffffff;
+                background-color: #303030;
+            }
+        }
+        </style>
     </head>
     <body>
         <input id="inUrl" type="text">
         <input id="chkJson" type="checkbox">
+        <label for="chkJson">JSON</label>
         <button id="btnRequest">Request</button>
         <button id="btnReset">Reset</button>
+        <div id="elResult" class="result-container"></div>
+        <script src="index.min.js"></script>
         <script>
             (function () {
                 // TEST 'https://jsonplaceholder.typicode.com/posts/1'
 
-                var inUrl, chkJson
+                var inUrl, chkJson, txtResult
+                var _lastRequest
 
                 document.addEventListener('DOMContentLoaded', start)
 
                 function start () {
-                    var btnRequest, btnReset
+                    var btnRequest, btnReset, elResult, elPre
 
                     inUrl = document.getElementById('inUrl')
                     chkJson = document.getElementById('chkJson')
                     btnRequest = document.getElementById('btnRequest')
                     btnReset = document.getElementById('btnReset')
+                    elResult = document.getElementById('elResult')
+
+                    elPre = document.createElement('pre')
+                    txtResult = document.createTextNode('')
+
+                    elPre.appendChild(txtResult)
+                    elResult.appendChild(elPre)
 
                     btnRequest.addEventListener('click',actionRequest)
                     btnReset.addEventListener('click',actionReset)
                 }
 
                 function actionRequest () {
-                    console.log('ACTION Request', chkJson.checked)
-                    RequestJs(
+                    _clearLastRequest()
+                    _lastRequest = RequestJs(
                         {
                             url: inUrl.value,
-                            json: chkJson.checked
+                            json: chkJson.checked,
+                            timeout: 5000
                         },
                         onRequest
                     )
                 }
 
                 function actionReset () {
-                    console.log('ACTION Reset')
+                    _clearLastRequest()
                     inUrl.value = ''
                 }
 
                 function onRequest (err, result) {
-                    console.log('On requst', err, result)
+                    var _str
+                    _str = JSON.stringify(err ? err : result, null, 2)
+                    console.log(
+                        'On requst\nError\n',
+                        err,
+                        '\nResult\n',
+                        result,
+                        '\nString\n',
+                        _str
+                    )
+                    txtResult.nodeValue = _str
+                }
+
+                function _clearLastRequest () {
+                    if (_lastRequest && _lastRequest.abort) {
+                        _lastRequest.abort()
+                    }
+                    _lastRequest = null
                 }
             }())
         </script>
