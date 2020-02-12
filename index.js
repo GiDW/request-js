@@ -20,6 +20,9 @@
 }(typeof self !== 'undefined' ? self : this, function () {
   var ua, msie, aNode
 
+  var H_ACCEPT = 'accept'
+  var H_CONTENT_TYPE = 'content-type'
+
   ua = window.navigator.userAgent
   msie = getMsie()
   aNode = document.createElement('a')
@@ -29,9 +32,6 @@
     var req, _url, _params, keys, key, lkey, value, length, i
     var acceptFound, contentFound
     var _method, _response, _status
-
-    var H_ACCEPT = 'accept'
-    var H_CONTENT_TYPE = 'content-type'
 
     _cbCalled = false
     acceptFound = false
@@ -124,7 +124,7 @@
           headers: req.getAllResponseHeaders()
         }
 
-        if (isSuccess(_status)) {
+        if (_status >= 200 && _status < 300) {
           if (config.json === true && isNEString(_response)) {
             try {
               parsed = JSON.parse(_response)
@@ -162,11 +162,11 @@
     }
 
     function _cb (error, result) {
-      if (!_cbCalled && isFunction(callback)) {
+      if (!_cbCalled) {
         _cbCalled = true
         clearTimeout(timeoutId)
         _clear()
-        callback(error, result)
+        if (isFunction(callback)) callback(error, result)
       }
     }
 
@@ -184,11 +184,9 @@
 
   RequestJs.get = function (url, callback, config) {
     var _config
-    if (!isFunction(callback)) return
 
     _config = config
     if (!isObject(_config)) _config = {}
-    _config.method = 'GET'
     _config.url = url
 
     return RequestJs(_config, callback)
@@ -196,7 +194,6 @@
 
   RequestJs.post = function (url, data, callback, config) {
     var _config
-    if (!isFunction(callback)) return
 
     _config = config
     if (!isObject(_config)) _config = {}
@@ -290,7 +287,7 @@
   }
 
   function isVNumber (value) {
-    return isFinite(value)
+    return typeof value === 'number' && isFinite(value)
   }
 
   function isNEString (value) {
@@ -311,13 +308,8 @@
       : value
   }
 
-  function isSuccess (status) {
-    return status >= 200 && status < 300
-  }
-
   function parseUrl (url) {
     var href
-    if (!isNEString(url)) return
 
     href = url
     if (msie) {
