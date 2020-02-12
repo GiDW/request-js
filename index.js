@@ -222,6 +222,7 @@
         line = parts[i]
         idx = line.indexOf(':')
         _addHeader(
+          parsed,
           line.substr(0, idx).trim().toLowerCase(),
           line.substr(idx + 1).trim()
         )
@@ -231,16 +232,16 @@
       length = parts.length
       for (i = 0; i < length; i++) {
         line = parts[i]
-        _addHeader(line.toLowerCase(), headers[line].trim())
+        _addHeader(parsed, line.toLowerCase(), headers[line].trim())
       }
     }
 
     return parsed
+  }
 
-    function _addHeader (key, value) {
-      if (key) {
-        parsed[key] = parsed[key] ? parsed[key] + ', ' + value : value
-      }
+  function _addHeader (obj, key, value) {
+    if (key) {
+      obj[key] = obj[key] ? obj[key] + ', ' + value : value
     }
   }
 
@@ -259,7 +260,7 @@
 
       if (isValidParamValue(value)) {
         if (Array.isArray(value)) {
-          _serializeArray(key, value)
+          _serializeArray(parts, key, value)
         } else {
           parts.push(key + '=' + encodeURIComponent(serializeValue(value)))
         }
@@ -267,15 +268,15 @@
     }
 
     return parts.join('&')
+  }
 
-    function _serializeArray (key, arr) {
-      var i, length
+  function _serializeArray (parts, key, arr) {
+    var i, length
 
-      length = arr.length
-      for (i = 0; i < length; i++) {
-        if (isValidParamValue(arr[i])) {
-          parts.push(key + '=' + encodeURIComponent(serializeValue(arr[i])))
-        }
+    length = arr.length
+    for (i = 0; i < length; i++) {
+      if (isValidParamValue(arr[i])) {
+        parts.push(key + '=' + encodeURIComponent(serializeValue(arr[i])))
       }
     }
   }
