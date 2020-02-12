@@ -28,7 +28,7 @@
   aNode = document.createElement('a')
 
   function RequestJs (config, callback) {
-    var _cbCalled, timeoutId, timedOut
+    var _cbCalled, _config, timeoutId, timedOut
     var req, _url, _params, keys, key, lkey, value, length, i
     var acceptFound, contentFound
     var _method, _response, _status
@@ -38,28 +38,34 @@
     contentFound = false
     timedOut = false
 
-    if (!isObject(config) || !isNEString(config.url)) {
+    if (isNEString(config)) {
+      _config = {
+        url: config
+      }
+    } else if (isObject(config) && isNEString(config.url)) {
+      _config = config
+    } else {
       _cb(RequestJs.ERR_INVALID_CONFIG)
       return
     }
 
-    if (typeof config.timeout === 'number' && config.timeout > 0) {
-      timeoutId = setTimeout(onTimeout, config.timeout)
+    _url = _config.url
+
+    if (typeof _config.timeout === 'number' && _config.timeout > 0) {
+      timeoutId = setTimeout(onTimeout, _config.timeout)
     }
 
     req = new window.XMLHttpRequest()
     req.onreadystatechange = onReadyStateChange
 
-    _url = config.url
-
-    _params = paramSerializer(config.params)
+    _params = paramSerializer(_config.params)
 
     if (_params) {
       _url += _url.indexOf('?') > 0 ? '&' : '?'
       _url += _params
     }
 
-    _method = config.method ? config.method.toUpperCase() : 'GET'
+    _method = _config.method ? _config.method.toUpperCase() : 'GET'
 
     req.open(
       _method,
@@ -67,13 +73,13 @@
       true
     )
 
-    if (isObject(config.headers)) {
-      keys = Object.keys(config.headers)
+    if (isObject(_config.headers)) {
+      keys = Object.keys(_config.headers)
       length = keys.length
       for (i = 0; i < length; i++) {
         key = keys[i]
         lkey = key.toLowerCase()
-        value = config.headers[key]
+        value = _config.headers[key]
         if (!acceptFound && lkey === H_ACCEPT) acceptFound = true
         if (!contentFound && lkey === H_CONTENT_TYPE) contentFound = true
         if (typeof value !== 'undefined') req.setRequestHeader(key, value)
@@ -90,7 +96,7 @@
       }
     }
 
-    req.send(typeof config.data !== 'undefined' ? config.data : null)
+    req.send(typeof _config.data !== 'undefined' ? _config.data : null)
 
     return {
       abort: abort
@@ -113,19 +119,19 @@
         if (_status === 0) {
           _status = _response
             ? 200
-            : parseUrl(config.url).protocol === 'file:' ? 404 : 0
+            : parseUrl(_config.url).protocol === 'file:' ? 404 : 0
         }
 
         result = {
           data: _response,
-          config: config,
+          config: _config,
           status: _status,
           statusText: req.statusText || '',
           headers: req.getAllResponseHeaders()
         }
 
         if (_status >= 200 && _status < 300) {
-          if (config.json === true && isNEString(_response)) {
+          if (_config.json === true && isNEString(_response)) {
             try {
               parsed = JSON.parse(_response)
               result.data = parsed
@@ -152,7 +158,7 @@
         req.abort()
         _cb({
           data: '',
-          config: config,
+          config: _config,
           status: 0,
           statusText: '',
           headers: '',
