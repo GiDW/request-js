@@ -43,7 +43,7 @@
       return
     }
 
-    if (isVNumber(config.timeout) && config.timeout > 0) {
+    if (typeof config.timeout === 'number' && config.timeout > 0) {
       timeoutId = setTimeout(onTimeout, config.timeout)
     }
 
@@ -76,7 +76,7 @@
         value = config.headers[key]
         if (!acceptFound && lkey === H_ACCEPT) acceptFound = true
         if (!contentFound && lkey === H_CONTENT_TYPE) contentFound = true
-        if (isDefined(value)) req.setRequestHeader(key, value)
+        if (typeof value !== 'undefined') req.setRequestHeader(key, value)
       }
     }
 
@@ -90,7 +90,7 @@
       }
     }
 
-    req.send(isDefined(config.data) ? config.data : null)
+    req.send(typeof config.data !== 'undefined' ? config.data : null)
 
     return {
       abort: abort
@@ -166,7 +166,7 @@
         _cbCalled = true
         clearTimeout(timeoutId)
         _clear()
-        if (isFunction(callback)) callback(error, result)
+        if (typeof callback === 'function') callback(error, result)
       }
     }
 
@@ -274,28 +274,12 @@
     }
   }
 
-  function isDefined (value) {
-    return typeof value !== 'undefined'
-  }
-
   function isObject (value) {
     return typeof value === 'object' && value !== null
   }
 
-  function isFunction (fn) {
-    return typeof fn === 'function'
-  }
-
-  function isVNumber (value) {
-    return typeof value === 'number' && isFinite(value)
-  }
-
   function isNEString (value) {
     return typeof value === 'string' && value.length > 0
-  }
-
-  function isDate (value) {
-    return Object.prototype.toString.call(value) === '[object Date]'
   }
 
   function isValidParamValue (value) {
@@ -304,7 +288,9 @@
 
   function serializeValue (value) {
     return isObject(value)
-      ? isDate(value) ? value.toISOString : JSON.stringify(value)
+      ? Object.prototype.toString.call(value) === '[object Date]'
+        ? value.toISOString
+        : JSON.stringify(value)
       : value
   }
 
