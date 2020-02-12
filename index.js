@@ -258,7 +258,7 @@
       key = encodeURIComponent(keys[i])
       value = params[key]
 
-      if (isValidParamValue(value)) {
+      if (typeof value !== 'function') {
         if (Array.isArray(value)) {
           _serializeArray(parts, key, value)
         } else {
@@ -271,12 +271,13 @@
   }
 
   function _serializeArray (parts, key, arr) {
-    var i, length
+    var i, length, item
 
     length = arr.length
     for (i = 0; i < length; i++) {
-      if (isValidParamValue(arr[i])) {
-        parts.push(key + '=' + encodeURIComponent(serializeValue(arr[i])))
+      item = arr[i]
+      if (typeof item !== 'function') {
+        parts.push(key + '=' + encodeURIComponent(serializeValue(item)))
       }
     }
   }
@@ -287,10 +288,6 @@
 
   function isNEString (value) {
     return typeof value === 'string' && value.length > 0
-  }
-
-  function isValidParamValue (value) {
-    return value && typeof value !== 'function'
   }
 
   function serializeValue (value) {
