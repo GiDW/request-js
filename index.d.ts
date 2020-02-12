@@ -1,51 +1,51 @@
-export as namespace RequestJs;
+export as namespace RequestJs
 
-export = RequestJs;
+export = RequestJs
 
 declare function RequestJs(
   config: RequestJs.RequestJsConfig,
   callback: RequestJs.RequestJsCallback
-): RequestJs.RequestJsReturnType;
+): RequestJs.RequestJsReturnType
 
 declare namespace RequestJs {
   export interface RequestJsConfig {
-    url: string;
-    method?: string;
+    url: string
+    method?: string
     params?: {
-      [propName: string]: any;
+      [propName: string]: any
     },
     headers?: {
-      [propName: string]: string;
+      [propName: string]: string
     },
-    timeout?: number;
-    data?: any;
+    timeout?: number
+    data?: any
   }
   export interface RequestJsResultType {
-    data: string;
-    config: RequestJsConfig;
-    status: number;
-    statusTest: string;
-    headers: string;
-    requestStatus: string;
+    data: string
+    config: RequestJsConfig
+    status: number
+    statusTest: string
+    headers: string
+    requestStatus: string
   }
   export interface RequestJsReturnType {
-    abort: function;
+    abort: () => void
   }
   export interface RequestJsCallback {
-    (error: RequestJsResultType, result: RequestJsResultType): void;
+    (error: RequestJsResultType, result: RequestJsResultType): void
   }
   export function get(
     url: string,
     callback: RequestJsCallback,
     config?: RequestJsConfig,
-  ): RequestJsReturnType;
+  ): RequestJsReturnType
   export function post(
     url: string,
     data: any,
     callback: RequestJsCallback,
     config?: RequestJsConfig,
-  ): RequestJsReturnType;
+  ): RequestJsReturnType
   export function parseHeaders (
-    headers: string | object
-  ): object
+    headers: string | { [key: string]: any }
+  ): { [key: string]: any }
 }
