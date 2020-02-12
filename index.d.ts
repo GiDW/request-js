@@ -3,7 +3,7 @@ export as namespace RequestJs
 export = RequestJs
 
 declare function RequestJs(
-  config: RequestJs.RequestJsConfig,
+  config: RequestJs.RequestJsConfig | string,
   callback?: RequestJs.RequestJsCallback
 ): RequestJs.RequestJsReturnType | undefined
 
