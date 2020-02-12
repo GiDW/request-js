@@ -4,8 +4,8 @@ export = RequestJs
 
 declare function RequestJs(
   config: RequestJs.RequestJsConfig,
-  callback: RequestJs.RequestJsCallback
-): RequestJs.RequestJsReturnType
+  callback?: RequestJs.RequestJsCallback
+): RequestJs.RequestJsReturnType | void
 
 declare namespace RequestJs {
   export interface RequestJsConfig {
@@ -32,17 +32,17 @@ declare namespace RequestJs {
     abort: () => void
   }
   export interface RequestJsCallback {
-    (error: RequestJsResultType, result: RequestJsResultType): void
+    (error: RequestJsResultType | null, result?: RequestJsResultType): void
   }
   export function get(
     url: string,
-    callback: RequestJsCallback,
+    callback?: RequestJsCallback,
     config?: RequestJsConfig,
   ): RequestJsReturnType
   export function post(
     url: string,
     data: any,
-    callback: RequestJsCallback,
+    callback?: RequestJsCallback,
     config?: RequestJsConfig,
   ): RequestJsReturnType
   export function parseHeaders (
