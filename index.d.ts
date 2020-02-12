@@ -5,7 +5,7 @@ export = RequestJs
 declare function RequestJs(
   config: RequestJs.RequestJsConfig,
   callback?: RequestJs.RequestJsCallback
-): RequestJs.RequestJsReturnType | void
+): RequestJs.RequestJsReturnType | undefined
 
 declare namespace RequestJs {
   export interface RequestJsConfig {
