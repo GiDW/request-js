@@ -12,7 +12,7 @@ declare namespace RequestJs {
     url: string
     method?: string
     params?: {
-      [propName: string]: string | number | boolean | null | undefined
+      [propName: string]: any
     },
     headers?: {
       [propName: string]: string | number | boolean | null

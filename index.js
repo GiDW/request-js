@@ -293,7 +293,7 @@
   function serializeValue (value) {
     return isObject(value)
       ? Object.prototype.toString.call(value) === '[object Date]'
-        ? value.toISOString
+        ? value.toISOString()
         : JSON.stringify(value)
       : value
   }
