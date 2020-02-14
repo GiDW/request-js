@@ -24,7 +24,7 @@ declare namespace RequestJs {
     data: string
     config: RequestJsConfig
     status: number
-    statusTest: string
+    statusText: string
     headers: string
     requestStatus: string
   }
