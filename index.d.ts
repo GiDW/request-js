@@ -12,10 +12,10 @@ declare namespace RequestJs {
     url: string
     method?: string
     params?: {
-      [propName: string]: any
+      [propName: string]: string | number | boolean | null | undefined
     },
     headers?: {
-      [propName: string]: string
+      [propName: string]: string | number | boolean | null
     },
     timeout?: number
     data?: any
