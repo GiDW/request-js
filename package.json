@@ -30,7 +30,7 @@
     "email": "de.waele.gilles@gmail.com"
   },
   "scripts": {
-    "test": "standard index.js",
+    "lint": "standard src/index.ts",
     "build": "rollup --config rollup.config.js"
   },
   "standard": {
