@@ -27,10 +27,15 @@
     <button id="btnRequest">Request</button>
     <button id="btnReset">Reset</button>
     <div id="elResult" class="result-container"></div>
-    <script src="index.min.js"></script>
+    <script src="dist/index.js"></script>
     <script>
     (function () {
-        // TEST 'https://jsonplaceholder.typicode.com/posts/1'
+        // TESTS
+        // GET    https://jsonplaceholder.typicode.com/posts
+        // POST   https://jsonplaceholder.typicode.com/posts
+        // PUT    https://jsonplaceholder.typicode.com/posts/1
+        // PATCH  https://jsonplaceholder.typicode.com/posts/1
+        // DELETE https://jsonplaceholder.typicode.com/posts/1
 
         var inUrl, chkJson, txtResult
         var _lastRequest
