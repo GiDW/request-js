@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "target": "es5",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "rootDir": "./src"
+  },
+  "files": [
+    "src/index.ts"
+  ]
+}
