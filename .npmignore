@@ -277,6 +277,11 @@ $RECYCLE.BIN/
 *.tgz
 
 jsconfig.json
+tsconfig.json
+
+rollup.config.js
 
 test.html
 test.ts
+
+src
