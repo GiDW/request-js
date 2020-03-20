@@ -31,7 +31,8 @@
   },
   "scripts": {
     "lint": "standard src/index.ts",
-    "build": "rollup --config rollup.config.js"
+    "build": "rollup --config rollup.config.js",
+    "clean": "rm -rf dist/*"
   },
   "standard": {
     "ignore": [
