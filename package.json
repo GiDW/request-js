@@ -11,13 +11,18 @@
     "https",
     "minimal"
   ],
-  "browser": "index.js",
-  "types": "index.d.ts",
-  "unpkg": "index.min.js",
+  "browser": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "unpkg": "dist/index.js",
   "dependencies": {},
   "devDependencies": {
+    "@rollup/plugin-typescript": "4.0.0",
+    "@typescript-eslint/eslint-plugin": "2.24.0",
+    "@typescript-eslint/parser": "2.24.0",
+    "rollup": "2.1.0",
+    "rollup-plugin-uglify": "6.0.4",
     "standard": "14.3.3",
-    "uglify-js": "3.8.0"
+    "typescript": "3.8.3"
   },
   "repository": "github:GiDW/request-js.git",
   "bugs": {
@@ -25,7 +30,17 @@
     "email": "de.waele.gilles@gmail.com"
   },
   "scripts": {
-    "test": "standard index.js",
-    "build": "uglifyjs index.js --compress --mangle -o index.min.js"
+    "lint": "standard src/index.ts",
+    "build": "rollup --config rollup.config.js",
+    "clean": "rm -rf dist/*"
+  },
+  "standard": {
+    "ignore": [
+      "dist/"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ]
   }
 }

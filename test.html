@@ -6,12 +6,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <style>
+    .list {
+        list-style-type: none;
+    }
+    .test-indicator {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        border-radius: 100%;
+        overflow: hidden;
+        border: 1px solid grey;
+        margin-right: .4em;
+    }
+    .test-indicator-progress {
+        animation-name: fade-bg-grey;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+    }
+    .test-indicator-good {
+        background-color: green;
+    }
+    .test-indicator-bad {
+        background-color: red;
+    }
     .result-container {
         width: 100%;
         max-width: 100%;
         margin-left: auto;
         margin-right: auto;
         overflow: auto;
+    }
+    @keyframes fade-bg-grey {
+        0% {
+            background-color: transparent;
+        }
+        50% {
+            background-color: grey;
+        }
+        100% {
+            background-color: transparent;
+        }
     }
     @media (prefers-color-scheme: dark) {
         body {
@@ -22,24 +56,48 @@
     </style>
 </head>
 <body>
-    <input id="inUrl" type="text">
+    <header><h1>RequestJs</h1></header>
+    <h2>Standard tests</h2>
+    <button id="btnRunStandardTests">Run standard tests</button>
+    <ul class="list">
+        <li><div id="tstInGet" class="test-indicator"></div>GET</li>
+        <li><div id="tstInPost" class="test-indicator"></div>POST</li>
+        <li><div id="tstInPut" class="test-indicator"></div>PUT</li>
+        <li><div id="tstInPatch" class="test-indicator"></div>PATCH</li>
+        <li><div id="tstInDelete" class="test-indicator"></div>DELETE</li>
+    </ul>
+    <h2>Test URL</h2>
+    <label>URL <input id="inUrl" type="text"></label>
     <label><input id="chkJson" type="checkbox"> JSON</label>
     <button id="btnRequest">Request</button>
     <button id="btnReset">Reset</button>
     <div id="elResult" class="result-container"></div>
-    <script src="index.min.js"></script>
+    <script src="dist/index.js"></script>
     <script>
     (function () {
-        // TEST 'https://jsonplaceholder.typicode.com/posts/1'
+        // TESTS
+        // GET    https://jsonplaceholder.typicode.com/posts/1
+        // POST   https://jsonplaceholder.typicode.com/posts
+        // PUT    https://jsonplaceholder.typicode.com/posts/1
+        // PATCH  https://jsonplaceholder.typicode.com/posts/1
+        // DELETE https://jsonplaceholder.typicode.com/posts/1
 
         var inUrl, chkJson, txtResult
+        var tstInGet, tstInPost, tstInPut, tstInPatch, tstInDelete
+        var tstIndiciators, tstRequests
         var _lastRequest
 
         document.addEventListener('DOMContentLoaded', start)
 
         function start () {
-            var btnRequest, btnReset, elResult, elPre
+            var btnRunStandardTests, btnRequest, btnReset, elResult, elPre
 
+            btnRunStandardTests = document.getElementById('btnRunStandardTests')
+            tstInGet = document.getElementById('tstInGet')
+            tstInPost = document.getElementById('tstInPost')
+            tstInPut = document.getElementById('tstInPut')
+            tstInPatch = document.getElementById('tstInPatch')
+            tstInDelete = document.getElementById('tstInDelete')
             inUrl = document.getElementById('inUrl')
             chkJson = document.getElementById('chkJson')
             btnRequest = document.getElementById('btnRequest')
@@ -52,8 +110,25 @@
             elPre.appendChild(txtResult)
             elResult.appendChild(elPre)
 
-            btnRequest.addEventListener('click',actionRequest)
-            btnReset.addEventListener('click',actionReset)
+            tstIndiciators = [
+                tstInGet,
+                tstInPost,
+                tstInPut,
+                tstInPatch,
+                tstInDelete
+            ]
+
+            btnRunStandardTests.addEventListener('click', actionRunStandardTests)
+            btnRequest.addEventListener('click', actionRequest)
+            btnReset.addEventListener('click', actionReset)
+        }
+
+        function actionRunStandardTests () {
+            _clearAllTestRequests()
+            _clearAllTestIndicators()
+
+            tstRequests.push(runTestGet())
+            tstRequests.push(runTestPost())
         }
 
         function actionRequest () {
@@ -85,6 +160,85 @@
                 _str
             )
             txtResult.nodeValue = _str
+        }
+
+        function runTestGet () {
+            var resultStr
+            resultStr = "{\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\",\n  \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"\n}"
+            tstInGet.classList.add('test-indicator-progress')
+            return RequestJs(
+                {
+                    url: 'https://jsonplaceholder.typicode.com/posts/1',
+                    timeout: 2000
+                },
+                function (error, result) {
+                    tstInGet.classList.remove('test-indicator-progress')
+                    if (error) {
+                        tstInGet.classList.add('test-indicator-bad')
+                    } else {
+                        if (result.data === resultStr) {
+                            tstInGet.classList.add('test-indicator-good')
+                        } else {
+                            tstInGet.classList.add('test-indicator-bad')
+                        }
+                    }
+                }
+            )
+        }
+
+        function runTestPost () {
+            var postData, resultStr
+            postData = {
+                lol: 12,
+                abc: 'abc'
+            }
+            resultStr = "{\n  \"lol\": 12,\n  \"abc\": \"abc\",\n  \"id\": 101\n}"
+            tstInPost.classList.add('test-indicator-progress')
+            return RequestJs(
+                {
+                    url: 'https://jsonplaceholder.typicode.com/posts',
+                    method: 'POST',
+                    data: JSON.stringify(postData),
+                    timeout: 10000
+                },
+                function (error, result) {
+                    tstInPost.classList.remove('test-indicator-progress')
+                    console.log('POST\n', error, result)
+                    if (error) {
+                        tstInPost.classList.add('test-indicator-bad')
+                    } else {
+                        if (result.data === resultStr) {
+                            tstInPost.classList.add('test-indicator-good')
+                        } else {
+                            tstInPost.classList.add('test-indicator-bad')
+                        }
+                    }
+                }
+            )
+        }
+
+        function _clearAllTestRequests () {
+            var length, i, req
+            if (Array.isArray(tstRequests)) {
+                length = tstRequests.length
+                for (i = 0; i < length; i++) {
+                    req = tstRequests[i]
+                    if (req && req.abort) req.abort()
+                }
+            }
+            tstRequests = []
+        }
+
+        function _clearAllTestIndicators () {
+            var length, i
+            length = tstIndiciators.length
+            for (i = 0; i < length; i++) {
+                tstIndiciators[i].classList.remove(
+                    'test-indicator-progress',
+                    'test-indicator-good',
+                    'test-indicator-bad'
+                )
+            }
         }
 
         function _clearLastRequest () {
