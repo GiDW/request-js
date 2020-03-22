@@ -168,8 +168,7 @@
             tstInGet.classList.add('test-indicator-progress')
             return RequestJs(
                 {
-                    url: 'https://reqres.in/api/users',
-                    timeout: 2000
+                    url: 'https://reqres.in/api/users'
                 },
                 function (error, result) {
                     tstInGet.classList.remove('test-indicator-progress')
@@ -187,8 +186,8 @@
         }
 
         function runTestPost () {
-            var postData, resultStr
-            postData = {
+            var data, resultStr
+            data = {
                 'email': 'eve.holt@reqres.in',
                 'password': 'pistol'
             }
@@ -198,7 +197,7 @@
                 {
                     url: 'https://reqres.in/api/register',
                     method: 'POST',
-                    data: JSON.stringify(postData)
+                    data: JSON.stringify(data)
                 },
                 function (error, result) {
                     tstInPost.classList.remove('test-indicator-progress')
@@ -216,8 +215,8 @@
         }
 
         function runTestPut() {
-            var putData
-            putData = {
+            var data
+            data = {
                 'name': 'morpheus',
                 'job': 'zion resident'
             }
@@ -226,7 +225,7 @@
                 {
                     url: 'https://reqres.in/api/users/2',
                     method: 'PUT',
-                    data: JSON.stringify(putData)
+                    data: JSON.stringify(data)
                 },
                 function (error, result) {
                     var obj
@@ -252,8 +251,8 @@
         }
 
         function runTestPatch () {
-            var putData
-            putData = {
+            var data
+            data = {
                 'name': 'morpheus',
                 'job': 'zion resident'
             }
@@ -261,8 +260,8 @@
             return RequestJs(
                 {
                     url: 'https://reqres.in/api/users/2',
-                    method: 'PUT',
-                    data: JSON.stringify(putData)
+                    method: 'PATCH',
+                    data: JSON.stringify(data)
                 },
                 function (error, result) {
                     var obj
