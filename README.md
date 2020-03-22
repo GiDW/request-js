@@ -14,8 +14,14 @@ var request = RequestJs(
     },
     function (error, result) {
         if (error) {
+            console.log('REQUEST STATUS', error.requestStatus)
             console.log('STATUS CODE', error.status)
             console.log('STATUS TEXT', error.statusText)
+            if (error.requestStatus === RequestJS.ERROR) {
+                // ...
+            } else if (error.requestStatus === RequestJS.TIMEOUT) {
+                // ...
+            }
         } else {
             console.log('DATA', result.data)
         }
@@ -23,4 +29,17 @@ var request = RequestJs(
 )
 
 if (STOP_REQUEST) request.abort()
+```
+
+```js
+RequestJs(
+    {
+        url: 'https://api.example.com/resource',
+        method: 'POST',
+        data: JSON.stringify({
+            item: 23,
+            content: 'abc'
+        })
+    }
+)
 ```
