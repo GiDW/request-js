@@ -76,11 +76,8 @@
     <script>
     (function () {
         // TESTS
-        // GET    https://jsonplaceholder.typicode.com/posts/1
-        // POST   https://jsonplaceholder.typicode.com/posts
-        // PUT    https://jsonplaceholder.typicode.com/posts/1
-        // PATCH  https://jsonplaceholder.typicode.com/posts/1
-        // DELETE https://jsonplaceholder.typicode.com/posts/1
+        // https://reqres.in
+        // https://jsonplaceholder.typicode.com
 
         var inUrl, chkJson, txtResult
         var tstInGet, tstInPost, tstInPut, tstInPatch, tstInDelete
@@ -129,6 +126,9 @@
 
             tstRequests.push(runTestGet())
             tstRequests.push(runTestPost())
+            tstRequests.push(runTestPut())
+            tstRequests.push(runTestPatch())
+            tstRequests.push(runTestDelete())
         }
 
         function actionRequest () {
@@ -164,11 +164,11 @@
 
         function runTestGet () {
             var resultStr
-            resultStr = "{\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\",\n  \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"\n}"
+            resultStr = '{\"page\":1,\"per_page\":6,\"total\":12,\"total_pages\":2,\"data\":[{\"id\":1,\"email\":\"george.bluth@reqres.in\",\"first_name\":\"George\",\"last_name\":\"Bluth\",\"avatar\":\"https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg\"},{\"id\":2,\"email\":\"janet.weaver@reqres.in\",\"first_name\":\"Janet\",\"last_name\":\"Weaver\",\"avatar\":\"https://s3.amazonaws.com/uifaces/faces/twitter/josephstein/128.jpg\"},{\"id\":3,\"email\":\"emma.wong@reqres.in\",\"first_name\":\"Emma\",\"last_name\":\"Wong\",\"avatar\":\"https://s3.amazonaws.com/uifaces/faces/twitter/olegpogodaev/128.jpg\"},{\"id\":4,\"email\":\"eve.holt@reqres.in\",\"first_name\":\"Eve\",\"last_name\":\"Holt\",\"avatar\":\"https://s3.amazonaws.com/uifaces/faces/twitter/marcoramires/128.jpg\"},{\"id\":5,\"email\":\"charles.morris@reqres.in\",\"first_name\":\"Charles\",\"last_name\":\"Morris\",\"avatar\":\"https://s3.amazonaws.com/uifaces/faces/twitter/stephenmoon/128.jpg\"},{\"id\":6,\"email\":\"tracey.ramos@reqres.in\",\"first_name\":\"Tracey\",\"last_name\":\"Ramos\",\"avatar\":\"https://s3.amazonaws.com/uifaces/faces/twitter/bigmancho/128.jpg\"}],\"ad\":{\"company\":\"StatusCode Weekly\",\"url\":\"http://statuscode.org/\",\"text\":\"A weekly newsletter focusing on software development, infrastructure, the server, performance, and the stack end of things.\"}}'
             tstInGet.classList.add('test-indicator-progress')
             return RequestJs(
                 {
-                    url: 'https://jsonplaceholder.typicode.com/posts/1',
+                    url: 'https://reqres.in/api/users',
                     timeout: 2000
                 },
                 function (error, result) {
@@ -189,21 +189,19 @@
         function runTestPost () {
             var postData, resultStr
             postData = {
-                lol: 12,
-                abc: 'abc'
+                'email': 'eve.holt@reqres.in',
+                'password': 'pistol'
             }
-            resultStr = "{\n  \"lol\": 12,\n  \"abc\": \"abc\",\n  \"id\": 101\n}"
+            resultStr = '{\"id\":4,\"token\":\"QpwL5tke4Pnpja7X4\"}'
             tstInPost.classList.add('test-indicator-progress')
             return RequestJs(
                 {
-                    url: 'https://jsonplaceholder.typicode.com/posts',
+                    url: 'https://reqres.in/api/register',
                     method: 'POST',
-                    data: JSON.stringify(postData),
-                    timeout: 10000
+                    data: JSON.stringify(postData)
                 },
                 function (error, result) {
                     tstInPost.classList.remove('test-indicator-progress')
-                    console.log('POST\n', error, result)
                     if (error) {
                         tstInPost.classList.add('test-indicator-bad')
                     } else {
@@ -211,6 +209,100 @@
                             tstInPost.classList.add('test-indicator-good')
                         } else {
                             tstInPost.classList.add('test-indicator-bad')
+                        }
+                    }
+                }
+            )
+        }
+
+        function runTestPut() {
+            var putData
+            putData = {
+                'name': 'morpheus',
+                'job': 'zion resident'
+            }
+            tstInPut.classList.add('test-indicator-progress')
+            return RequestJs(
+                {
+                    url: 'https://reqres.in/api/users/2',
+                    method: 'PUT',
+                    data: JSON.stringify(putData)
+                },
+                function (error, result) {
+                    var obj
+                    tstInPut.classList.remove('test-indicator-progress')
+                    if (error) {
+                        tstInPut.classList.add('test-indicator-bad')
+                    } else {
+                        try {
+                            obj = JSON.parse(result.data)
+                        } catch (e) {
+                            tstInPut.classList.add('test-indicator-bad')
+                        }
+                        if (obj &&
+                            obj['name'] === 'morpheus' &&
+                            obj['job'] === 'zion resident') {
+                            tstInPut.classList.add('test-indicator-good')
+                        } else {
+                            tstInPut.classList.add('test-indicator-bad')
+                        }
+                    }
+                }
+            )
+        }
+
+        function runTestPatch () {
+            var putData
+            putData = {
+                'name': 'morpheus',
+                'job': 'zion resident'
+            }
+            tstInPatch.classList.add('test-indicator-progress')
+            return RequestJs(
+                {
+                    url: 'https://reqres.in/api/users/2',
+                    method: 'PUT',
+                    data: JSON.stringify(putData)
+                },
+                function (error, result) {
+                    var obj
+                    tstInPatch.classList.remove('test-indicator-progress')
+                    if (error) {
+                        tstInPut.classList.add('test-indicator-bad')
+                    } else {
+                        try {
+                            obj = JSON.parse(result.data)
+                            if (obj &&
+                                obj['name'] === 'morpheus' &&
+                                obj['job'] === 'zion resident') {
+                                tstInPatch.classList.add('test-indicator-good')
+                            } else {
+                                tstInPatch.classList.add('test-indicator-bad')
+                            }
+                        } catch (e) {
+                            tstInPatch.classList.add('test-indicator-bad')
+                        }
+                    }
+                }
+            )
+        }
+
+        function runTestDelete () {
+            tstInDelete.classList.add('test-indicator-progress')
+            return RequestJs(
+                {
+                    url: 'https://reqres.in/api/users/2',
+                    method: 'DELETE'
+                },
+                function (error, result) {
+                    tstInDelete.classList.remove('test-indicator-progress')
+                    if (error) {
+                        tstInDelete.classList.add('test-indicator-bad')
+                    } else {
+                        if (result.status === 204) {
+                            tstInDelete.classList.add('test-indicator-good')
+                        } else {
+                            tstInDelete.classList.add('test-indicator-bad')
                         }
                     }
                 }
