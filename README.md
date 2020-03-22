@@ -17,13 +17,17 @@ var request = RequestJs(
             console.log('REQUEST STATUS', error.requestStatus)
             console.log('STATUS CODE', error.status)
             console.log('STATUS TEXT', error.statusText)
-            if (error.requestStatus === RequestJS.ERROR) {
+            if (error.requestStatus === RequestJs.ERROR) {
                 // ...
-            } else if (error.requestStatus === RequestJS.TIMEOUT) {
+            } else if (error.requestStatus === RequestJs.TIMEOUT) {
                 // ...
             }
         } else {
             console.log('DATA', result.data)
+            console.log(
+                'HEADER Object',
+                RequestJs.parseHeaders(result.headers)
+            )
         }
     }
 )
