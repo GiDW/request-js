@@ -1,4 +1,4 @@
-export interface IRequestJsConfig {
+export interface RequestJsConfig {
     url: string;
     method?: string;
     params?: {
@@ -11,30 +11,28 @@ export interface IRequestJsConfig {
     data?: any;
     json?: boolean;
 }
-export interface IRequestJsCallback {
-    (error: IRequestJsResultType | string | null, result?: IRequestJsResultType): void;
+export interface RequestJsCallback {
+    (error: RequestJsResult | null, result?: RequestJsResult): void;
 }
-export interface IRequestJsResultType {
+export interface RequestJsResult {
     data: string;
-    config: IRequestJsConfig;
+    config: RequestJsConfig;
     status: number;
     statusText: string;
     headers: string;
     requestStatus: string;
 }
-export interface IRequestJsReturnType {
+export interface RequestJsRequest {
     abort: () => void;
 }
-declare function RequestJs(config: string | IRequestJsConfig, callback: IRequestJsCallback): {
-    abort: () => void;
-} | undefined;
+declare function RequestJs(config: string | RequestJsConfig, callback: RequestJsCallback): RequestJsRequest;
 declare namespace RequestJs {
     var parseHeaders: (headers: string | {
         [key: string]: any;
-    }) => {};
-    var ERR_INVALID_CONFIG: string;
+    }) => {
+        [key: string]: string;
+    };
     var ERROR: string;
-    var ABORTED: string;
     var TIMEOUT: string;
     var COMPLETED: string;
 }

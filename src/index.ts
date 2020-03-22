@@ -1,34 +1,34 @@
-export interface IRequestJsConfig {
+export interface RequestJsConfig {
   url: string
   method?: string
   params?: {
     [propName: string]: any
-  },
+  }
   headers?: {
     [propName: string]: string | number | boolean | null
-  },
+  }
   timeout?: number
   data?: any
   json?: boolean
 }
 
-export interface IRequestJsCallback {
+export interface RequestJsCallback {
   (
-    error: IRequestJsResultType | string | null,
-    result?: IRequestJsResultType
+    error: RequestJsResult | null,
+    result?: RequestJsResult
   ): void
 }
 
-export interface IRequestJsResultType {
+export interface RequestJsResult {
   data: string
-  config: IRequestJsConfig
+  config: RequestJsConfig
   status: number
   statusText: string
   headers: string
   requestStatus: string
 }
 
-export interface IRequestJsReturnType {
+export interface RequestJsRequest {
   abort: () => void
 }
 
@@ -40,17 +40,23 @@ const msie = getMsie()
 const aNode = document.createElement('a')
 
 export default function RequestJs (
-  config: string | IRequestJsConfig,
-  callback: IRequestJsCallback
-) {
-  let _status, _response
-  let _timeoutId = 0
-  let _cbCalled = false
-  let _acceptFound = false
-  let _contentFound = false
-  let _timedOut = false
+  config: string | RequestJsConfig,
+  callback: RequestJsCallback
+): RequestJsRequest {
+  let status, response
+  let cbCalled = false
+  let timeoutId = 0
+  let timedOut = false
+  let acceptFound = false
+  let contentFound = false
 
-  const __config: IRequestJsConfig | null = isNEString(config)
+  let req: XMLHttpRequest | null = null
+
+  const result: RequestJsRequest = {
+    abort: abort
+  }
+
+  const configOrNull: RequestJsConfig | null = isNEString(config)
     ? {
       url: config
     }
@@ -58,34 +64,44 @@ export default function RequestJs (
       ? config
       : null
 
-  if (!__config) {
-    _cb(RequestJs.ERR_INVALID_CONFIG)
-    return
+  if (!configOrNull) {
+    // eslint-disable-next-line standard/no-callback-literal
+    cb({
+      data: '',
+      config: {
+        url: ''
+      },
+      status: 0,
+      statusText: 'Invalid config',
+      headers: '',
+      requestStatus: RequestJs.ERROR
+    })
+    return result
   }
 
-  const _config: IRequestJsConfig = __config
+  const _config: RequestJsConfig = configOrNull
 
-  let _url = _config.url
+  let url = _config.url
 
   if (typeof _config.timeout === 'number' && _config.timeout > 0) {
-    _timeoutId = setTimeout(_onTimeout, _config.timeout)
+    timeoutId = setTimeout(onTimeout, _config.timeout)
   }
 
-  let req: XMLHttpRequest | null = new window.XMLHttpRequest()
-  req.onreadystatechange = _onReadyStateChange
+  req = new window.XMLHttpRequest()
+  req.onreadystatechange = onReadyStateChange
 
-  const _params = paramSerializer(_config.params)
+  const params = paramSerializer(_config.params)
 
-  if (_params) {
-    _url += _url.indexOf('?') > 0 ? '&' : '?'
-    _url += _params
+  if (params) {
+    url += url.indexOf('?') > 0 ? '&' : '?'
+    url += params
   }
 
-  const _method = _config.method ? _config.method.toUpperCase() : 'GET'
+  const method = _config.method ? _config.method.toUpperCase() : 'GET'
 
   req.open(
-    _method,
-    _url,
+    method,
+    url,
     true
   )
 
@@ -96,18 +112,18 @@ export default function RequestJs (
       const key = keys[i]
       const lkey = key.toLowerCase()
       const value = '' + _config.headers[key]
-      if (!_acceptFound && lkey === H_ACCEPT) _acceptFound = true
-      if (!_contentFound && lkey === H_CONTENT_TYPE) _contentFound = true
+      if (!acceptFound && lkey === H_ACCEPT) acceptFound = true
+      if (!contentFound && lkey === H_CONTENT_TYPE) contentFound = true
       if (typeof value !== 'undefined') req.setRequestHeader(key, value)
     }
   }
 
-  if (!_acceptFound) {
+  if (!acceptFound) {
     req.setRequestHeader(H_ACCEPT, 'application/json, text/plain, */*')
   }
 
-  if (_method === 'POST' || _method === 'PUT' || _method === 'PATCH') {
-    if (!_contentFound) {
+  if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
+    if (!contentFound) {
       req.setRequestHeader(H_CONTENT_TYPE, 'application/json;charset=utf-8')
     }
   }
@@ -115,65 +131,66 @@ export default function RequestJs (
   req.send(typeof _config.data !== 'undefined' ? _config.data : null)
 
   return {
-    abort: _abort
+    abort: abort
   }
 
-  function _abort () {
+  function abort (): void {
     if (req) req.abort()
   }
 
-  function _onReadyStateChange () {
+  function onReadyStateChange (): void {
     if (req && req.readyState === 4) {
       // Handle IE9 bug
-      _status = req.status === 1223 ? 204 : req.status
+      status = req.status === 1223 ? 204 : req.status
 
       // Handle IE9
-      _response = ('response' in req)
+      response = ('response' in req)
         ? req.response
         : (req as any).responseText
 
       // Handle Android 4.1 for file:// requests
-      if (_status === 0) {
-        _status = _response
+      if (status === 0) {
+        status = response
           ? 200
           : parseUrl(_config.url).protocol === 'file:' ? 404 : 0
       }
 
-      const result: IRequestJsResultType = {
-        data: _response,
+      const result: RequestJsResult = {
+        data: response,
         config: _config,
-        status: _status,
+        status: status,
         statusText: req.statusText || '',
         headers: req.getAllResponseHeaders(),
         requestStatus: ''
       }
 
-      if (_status >= 200 && _status < 300) {
-        if (_config.json === true && isNEString(_response)) {
+      if (status >= 200 && status < 300) {
+        if (_config.json === true && isNEString(response)) {
           try {
-            result.data = JSON.parse(_response)
+            result.data = JSON.parse(response)
             result.requestStatus = RequestJs.COMPLETED
-            _cb(null, result)
+            cb(null, result)
           } catch (e) {
             result.requestStatus = RequestJs.ERROR
-            _cb(result)
+            cb(result)
           }
         } else {
           result.requestStatus = RequestJs.COMPLETED
-          _cb(null, result)
+          cb(null, result)
         }
       } else {
-        result.requestStatus = _timedOut ? RequestJs.TIMEOUT : RequestJs.ERROR
-        _cb(result)
+        result.requestStatus = timedOut ? RequestJs.TIMEOUT : RequestJs.ERROR
+        cb(result)
       }
     }
   }
 
-  function _onTimeout () {
-    if (!_cbCalled) {
-      _timedOut = true
+  function onTimeout (): void {
+    if (!cbCalled) {
+      timedOut = true
       if (req) req.abort()
-      _cb({
+      // eslint-disable-next-line standard/no-callback-literal
+      cb({
         data: '',
         config: _config,
         status: 0,
@@ -184,25 +201,27 @@ export default function RequestJs (
     }
   }
 
-  function _cb (
-    error: null | string | IRequestJsResultType,
-    result?: IRequestJsResultType
-  ) {
-    if (!_cbCalled) {
-      _cbCalled = true
-      clearTimeout(_timeoutId)
-      _clear()
+  function cb (
+    error: null | RequestJsResult,
+    result?: RequestJsResult
+  ): void {
+    if (!cbCalled) {
+      cbCalled = true
+      clearTimeout(timeoutId)
+      clear()
       if (typeof callback === 'function') callback(error, result)
     }
   }
 
-  function _clear () {
+  function clear (): void {
     if (req) req.onreadystatechange = null
     req = null
   }
 }
 
-RequestJs.parseHeaders = function (headers: string | { [key: string]: any }) {
+RequestJs.parseHeaders = function (
+  headers: string | { [key: string]: any }
+): { [key: string]: string } {
   const parsed = {}
 
   if (isNEString(headers)) {
@@ -211,7 +230,7 @@ RequestJs.parseHeaders = function (headers: string | { [key: string]: any }) {
     for (let i = 0; i < length; i++) {
       const line = parts[i]
       const idx = line.indexOf(':')
-      _addHeader(
+      addHeader(
         parsed,
         line.substr(0, idx).trim().toLowerCase(),
         line.substr(idx + 1).trim()
@@ -222,16 +241,14 @@ RequestJs.parseHeaders = function (headers: string | { [key: string]: any }) {
     const length = parts.length
     for (let i = 0; i < length; i++) {
       const line = parts[i]
-      _addHeader(parsed, line.toLowerCase(), headers[line].trim())
+      addHeader(parsed, line.toLowerCase(), headers[line].trim())
     }
   }
 
   return parsed
 }
 
-RequestJs.ERR_INVALID_CONFIG = 'Invalid config'
 RequestJs.ERROR = 'error'
-RequestJs.ABORTED = 'aborted'
 RequestJs.TIMEOUT = 'timeout'
 RequestJs.COMPLETED = 'completed'
 
@@ -251,11 +268,11 @@ function serializeValue (value: any) {
     : value
 }
 
-function _addHeader (
+function addHeader (
   obj: { [key: string]: string },
   key: string,
   value: string
-) {
+): void {
   if (key) {
     obj[key] = obj[key] ? obj[key] + ', ' + value : value
   }
@@ -274,7 +291,7 @@ function paramSerializer (params?: { [key: string]: any }): string {
 
     if (typeof value !== 'function') {
       if (Array.isArray(value)) {
-        _serializeArray(parts, key, value)
+        serializeArray(parts, key, value)
       } else {
         parts.push(key + '=' + encodeURIComponent(serializeValue(value)))
       }
@@ -284,7 +301,7 @@ function paramSerializer (params?: { [key: string]: any }): string {
   return parts.join('&')
 }
 
-function _serializeArray (parts: string[], key: string, arr: string[]) {
+function serializeArray (parts: string[], key: string, arr: string[]) {
   const length = arr.length
   for (let i = 0; i < length; i++) {
     const item = arr[i]
@@ -316,7 +333,7 @@ function parseUrl (url: string) {
   }
 }
 
-function getMsie () {
+function getMsie (): number {
   let idx
 
   // IE 10 or older
