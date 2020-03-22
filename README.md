@@ -5,6 +5,8 @@ HTTP request helper for the browser.
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![License](https://img.shields.io/github/license/GiDW/request-js.svg)](https://github.com/GiDW/request-js/blob/master/LICENSE)
 
+Wrapper around XMLHTTPRequest for maximum compatibility.
+
 ## Usage
 
 ```js
