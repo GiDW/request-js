@@ -11,10 +11,7 @@ export default {
   },
   plugins: [
     typescript({
-      tsconfig: './tsconfig.json',
-      rootDir: './src',
-      declaration: true,
-      declarationDir: './dist'
+      tsconfig: './tsconfig.json'
     }),
     uglify({
       mangle: true,
