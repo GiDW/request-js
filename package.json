@@ -30,13 +30,13 @@
     "email": "de.waele.gilles@gmail.com"
   },
   "scripts": {
-    "lint": "standard src/index.ts",
+    "lint": "standard src/**/*.{js,ts}",
     "build": "rollup --config rollup.config.js",
     "clean": "rm -rf dist/*"
   },
   "standard": {
     "ignore": [
-      "dist/"
+      "dist/**/*"
     ],
     "parser": "@typescript-eslint/parser",
     "plugins": [
