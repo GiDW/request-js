@@ -285,6 +285,7 @@ $RECYCLE.BIN/
 
 .editorconfig
 .eslintrc.json
+.eslintrc.js
 
 *.zip
 *.tgz
