@@ -17,9 +17,9 @@
   "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-typescript": "4.0.0",
-    "@typescript-eslint/eslint-plugin": "2.24.0",
-    "@typescript-eslint/parser": "2.24.0",
-    "rollup": "2.1.0",
+    "@typescript-eslint/eslint-plugin": "2.25.0",
+    "@typescript-eslint/parser": "2.25.0",
+    "rollup": "2.2.0",
     "rollup-plugin-uglify": "6.0.4",
     "standard": "14.3.3",
     "typescript": "3.8.3"
