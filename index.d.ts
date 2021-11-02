@@ -25,7 +25,10 @@ export interface RequestJsResult {
 export interface RequestJsRequest {
     abort: () => void;
 }
-declare function RequestJs(config: string | RequestJsConfig, callback: RequestJsCallback): RequestJsRequest;
+declare function RequestJs(
+  config: string | RequestJsConfig,
+  callback: RequestJsCallback
+): RequestJsRequest;
 declare namespace RequestJs {
     var parseHeaders: (headers: string | {
         [key: string]: any;
