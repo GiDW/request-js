@@ -7,5 +7,8 @@ module.exports = {
     'node_modules/',
     'dist/**/*',
     '*.min.js'
-  ]
+  ],
+  rules: {
+    'no-shadow': 'error'
+  }
 }

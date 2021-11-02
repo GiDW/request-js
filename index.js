@@ -10,7 +10,7 @@
 
   function RequestJs (config, callback) {
     var status, response, timeoutId, timedOut, acceptFound, contentFound
-    var req, result, configOrNull, _config, url, params, method
+    var req, requestJsRequest, configOrNull, _config, url, params, method
     var keys, length, i, key, lkey, value
     var cbCalled
 
@@ -22,7 +22,7 @@
 
     req = null
 
-    result = {
+    requestJsRequest = {
       abort: abort
     }
 
@@ -45,7 +45,7 @@
         headers: '',
         requestStatus: RequestJs.ERROR
       })
-      return result
+      return requestJsRequest
     }
 
     _config = configOrNull
@@ -99,9 +99,7 @@
 
     req.send(typeof _config.data !== 'undefined' ? _config.data : null)
 
-    return {
-      abort: abort
-    }
+    return requestJsRequest
 
     function abort () {
       if (req) req.abort()
