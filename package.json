@@ -11,18 +11,16 @@
     "https",
     "minimal"
   ],
-  "browser": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "unpkg": "dist/index.js",
+  "browser": "index.min.js",
+  "types": "index.d.ts",
+  "unpkg": "index.min.js",
   "dependencies": {},
   "devDependencies": {
-    "@rollup/plugin-typescript": "5.0.0",
-    "@typescript-eslint/eslint-plugin": "3.4.0",
-    "@typescript-eslint/parser": "3.4.0",
-    "rollup": "2.18.0",
-    "rollup-plugin-uglify": "6.0.4",
-    "standard": "14.3.4",
-    "typescript": "3.9.5"
+    "@gidw/eslint-config-standard": "^1.0.3",
+    "eslint": "^8.1.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jsdoc": "^37.0.3",
+    "uglify-js": "^3.14.3"
   },
   "repository": "github:GiDW/request-js.git",
   "bugs": {
@@ -30,17 +28,7 @@
     "email": "de.waele.gilles@gmail.com"
   },
   "scripts": {
-    "lint": "standard src/**/*.{js,ts}",
-    "build": "rollup --config rollup.config.js",
-    "clean": "rm -rf dist/*"
-  },
-  "standard": {
-    "ignore": [
-      "dist/**/*"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ]
+    "lint": "eslint --no-error-on-unmatched-pattern --ext .js,.cjs,.mjs,.jsx,.tsx,.mts,.cts .",
+    "build": "uglifyjs --compress --mangle --webkit -o index.min.js index.js"
   }
 }

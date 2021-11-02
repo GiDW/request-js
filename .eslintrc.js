@@ -1,13 +1,11 @@
+/* eslint-env node */
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  plugins: [
-    '@typescript-eslint',
-  ],
   extends: [
-    'standard'
+    '@gidw/eslint-config-standard'
   ],
   ignorePatterns: [
     'node_modules/',
-    'dist/**/*'
+    'dist/**/*',
+    '*.min.js'
   ]
 }
